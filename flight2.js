@@ -15,6 +15,8 @@ var actualURL;
 var page = require('webpage').create();
 var api = require('webpage').create();
 
+var i = 0;
+
 //var dateRange = [getDateLater(printDate(new Date()), 10),'30/09/2015'];
 var dateRange = ['2015-11-05','2015-12-25'];
 console.log(destinos);
@@ -119,6 +121,8 @@ var onResponse = function(response) {
 
 			api.open(service_url, settings, function(status) {
 				console.log(actualDestin + ' - ' + actualDate + '-' + actualDateBack + ' - ' + actualPrice);
+				if (i>10) phantom.exit();
+				i++;
 				try{
 					page.clearCookies();
 					page.close();
