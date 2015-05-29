@@ -65,6 +65,7 @@ function getNextWeekend(td){
 var dates = generateDateArray(dateRange);
 
 function generateURL(dataIda, dataVolta, origem, destino){
+<<<<<<< HEAD
 	console.log("");console.log("");
 	console.log(dataIda);
 	console.log(dataVolta);
@@ -83,6 +84,7 @@ function getNewURL(){
 		actualDate = dates[getRandomInt(0,dates.length-1)];
 		actualDateBack = getDateLater(actualDate,getRandomInt(daysRange[0],daysRange[1]));
 	}
+
 	return generateURL(actualDate,actualDateBack, origem, actualDestin);
 }
 
@@ -100,6 +102,7 @@ page.onResourceReceived = function(response) {
 		if (prices*1 > 0){
 			console.log(prices);
 			openPage();
+
 		}
   	}
 };
