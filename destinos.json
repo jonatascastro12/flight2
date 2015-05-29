@@ -1,0 +1,5 @@
+[{
+"service_url": "localhost:8000",
+"origem": "rio",
+"destinos": ["muc", "rom", "par", "vie", "lis", "vce", "fra", "opo", "lon"]
+}]
