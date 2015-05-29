@@ -10,6 +10,10 @@ var actualPrice;
 var actualDate;
 var actualDateBack;
 var allData = {};
+var actualURL;
+
+var page = require('webpage').create();
+var api = require('webpage').create();
 
 //var dateRange = [getDateLater(printDate(new Date()), 10),'30/09/2015'];
 var dateRange = ['2015-11-05','2015-12-25'];
@@ -65,11 +69,6 @@ function getNextWeekend(td){
 var dates = generateDateArray(dateRange);
 
 function generateURL(dataIda, dataVolta, origem, destino){
-<<<<<<< HEAD
-	console.log("");console.log("");
-	console.log(dataIda);
-	console.log(dataVolta);
-	console.log("****DESTINO: "+destino);
 	return 'http://www.decolar.com/shop/flights/results/roundtrip/' + origem + 
 	'/' + destino + '/'+ dataIda +'/'+ dataVolta +'/2/0/0'
 }
@@ -89,27 +88,58 @@ function getNewURL(){
 }
 
 
-var page = require('webpage').create();
-
-page.onResourceReceived = function(response) {
+page = require('webpage').create();
+api = require('webpage').create();
+var found=true;
+var onResponse = function(response) {
+	if (found)
 	if (response.contentType == "application/json" && response.url.search('data/searchesCount') != -1){
-		console.log(response.url);
-		var prices = page.evaluate(function(){
-			var price = $('.fare-detail-base .price-amount').first().text();
+		found=false;
+		actualPrice = page.evaluate(function(){
+			var price = $('.fare-detail-base .price-amount').first().text().replace('.','').replace(',','.');
 			return price;
 		});
 
-		if (prices*1 > 0){
-			console.log(prices);
-			openPage();
+		if (actualPrice*1 > 0){
+			var settings = {
+			  operation: "POST",
+			  encoding: "utf8",
+			  headers: {
+				"Content-Type": "application/json"
+			  },
+			  data: JSON.stringify({
+				"departDate": actualDate,
+				"returnDate": actualDateBack,
+				"origin": origem,
+				"destination": actualDestin,
+				"price": actualPrice*1,
+				"searchUrl": actualURL
+			  })
+			};
 
+			api.open(service_url, settings, function(status) {
+				console.log(actualDestin + ' - ' + actualDate + '-' + actualDateBack + ' - ' + actualPrice);
+				try{
+					page.clearCookies();
+					page.close();
+					api.close();
+					page = require('webpage').create();
+					api = require('webpage').create();
+
+				}catch(e){
+					console.log(e);
+				}
+				openPage();
+			});
 		}
   	}
 };
 
 function openPage(){
-	page.open(getNewURL(), function(status) {
-		console.log(status);
+	found = true;
+	actualURL = getNewURL();
+	page.onResourceReceived = onResponse;
+	page.open(actualURL, function(status) {
 	});
 }
 
